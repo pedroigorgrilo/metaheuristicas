@@ -2,6 +2,9 @@ import numpy as np
 import time
 import pandas as pd
 import random
+import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
+from datetime import datetime
 
 import warnings
 
@@ -706,6 +709,19 @@ def ils(df_resultado,df_regras,max_iteracoes_ils,max_iteracoes_bl,mudancas_bl,n_
     valor_novo_otimo_local = df_novo_otimo_local.custo.sum()
     print("Custo atual após primeira BL: ",valor_novo_otimo_local)
 
+    plt.ion()
+    fig, ax = plt.subplots(figsize=(15, 6))
+    line, = ax.plot([], [], 'o-') 
+    ax.set_xlabel("Iteração")
+    ax.set_ylabel("Custo Total")
+    ax.set_title("Custo Total por Iteração")
+    plt.style.use('seaborn-v0_8-whitegrid')
+    formatter = ScalarFormatter(useOffset=False, useMathText=False)
+    formatter.set_scientific(False) # Desativar notação científica, se necessário
+    ax.yaxis.set_major_formatter(formatter)
+    x_data = []
+    y_data = []
+
     if valor_novo_otimo_local < melhor_custo:
         df_melhor_solucao_global = df_novo_otimo_local.copy()
         melhor_custo = valor_novo_otimo_local
@@ -733,6 +749,27 @@ def ils(df_resultado,df_regras,max_iteracoes_ils,max_iteracoes_bl,mudancas_bl,n_
 
         else:
             print("Solução não viável após pertubação na iteração: ",i)
+
+        x_data.append(i)
+        y_data.append(melhor_custo)
+
+        # Update the plot's data
+        line.set_xdata(x_data)
+        line.set_ydata(y_data)
+
+        # Adjust plot limits dynamically (optional, but often necessary)
+        ax.relim()
+        ax.autoscale_view()
+        fig.canvas.draw()
+        fig.canvas.flush_events()
+
+        # Introduce a delay to control update speed (optional)
+        time.sleep(0.1)
+
+    # Keep the plot open after the loop finishes (optional)
+    plt.ioff()
+    plt.savefig(f"ils_{str(datetime.now().day)+"."+str(datetime.now().month)+"."+str(datetime.now().year)+"."+str(datetime.now().hour)+"."+str(datetime.now().minute)}.png") 
+    plt.show()
     
     return df_melhor_solucao_global
 

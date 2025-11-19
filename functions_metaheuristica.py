@@ -771,6 +771,9 @@ def ils(df_resultado,df_regras,max_iteracoes_ils,max_iteracoes_bl,mudancas_bl,n_
     plt.savefig(f"ils_{str(datetime.now().day)+"."+str(datetime.now().month)+"."+str(datetime.now().year)+"."+str(datetime.now().hour)+"."+str(datetime.now().minute)}.png") 
     plt.show()
     
+    df_iteracao = pd.DataFrame({"Iteracao":x_data,"Melhor_Custo":y_data})
+    df_iteracao.to_csv("ILS_Melhor_Custo_Por_Iteracao.csv",index=False)
+    
     return df_melhor_solucao_global
 
 def validador(df_resultado,df_regras):
